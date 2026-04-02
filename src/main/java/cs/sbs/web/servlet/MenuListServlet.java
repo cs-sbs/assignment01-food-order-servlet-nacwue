@@ -15,7 +15,6 @@ import java.util.List;
  * 处理菜单查询 (Query Parameter)
  */
 public class MenuListServlet extends HttpServlet {
-    // 模拟数据库中的菜单数据
     private List<MenuItem> menuList;
 
     @Override
@@ -31,17 +30,23 @@ public class MenuListServlet extends HttpServlet {
         resp.setContentType("text/plain; charset=UTF-8");
         PrintWriter out = resp.getWriter();
 
-        // 获取 Query Parameter: ?name=xxx
         String searchName = req.getParameter("name");
 
         out.println("Menu List:\n");
         int index = 1;
+        boolean found = false; // 新增：用于记录是否找到了匹配的菜品
+
         for (MenuItem item : menuList) {
-            // 如果没有搜索参数，或者菜名包含搜索关键词，则返回该菜品
             if (searchName == null || searchName.isEmpty() || item.getName().toLowerCase().contains(searchName.toLowerCase())) {
                 out.println(index + ". " + item.getName() + " - $" + item.getPrice());
                 index++;
+                found = true; // 只要进来了，就说明找到了
             }
+        }
+
+        // 新增：如果没有找到任何匹配项，输出测试脚本期望的提示信息（包含 "No"）
+        if (!found) {
+            out.println("No items found matching your search.");
         }
     }
 }
